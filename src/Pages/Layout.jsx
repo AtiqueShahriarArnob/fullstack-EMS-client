@@ -1,8 +1,13 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 import SideBar from '../Components/SideBar';
+import { useAuth } from '../context/AuthContext';
+import { Loader } from 'lucide-react';
 
 const Layout = () => {
+    const { user, loading } = useAuth()
+    if (loading) return <Loader></Loader>
+    if (!user) return <Navigate to="/login"></Navigate>
     return (
         <div className='flex h-screen bg-linear-to-br from-slate-50 via-white to-indigo-50/30'>
             <SideBar></SideBar>

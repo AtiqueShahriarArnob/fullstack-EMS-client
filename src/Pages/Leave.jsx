@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { dummyLeaveData } from '../assets/assets';
+
 import {
     Loader2,
     PalmtreeIcon,
@@ -9,21 +9,29 @@ import {
 } from 'lucide-react';
 import LeaveHistory from '../Components/leave/LeaveHistory';
 import ApplyLeaveModal from '../Components/leave/ApplyLeaveModal';
+import { useAuth } from '../context/AuthContext';
+import toast from 'react-hot-toast/headless';
+import api from '../api/axios';
 
 const Leave = () => {
+    const { user } = useAuth()
     const [leaves, setLeaves] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [isDeleted, setIsDeleted] = useState(false);
 
-    const isAdmin = true;
+    const isAdmin = user?.role === "ADMIN";
 
     const fetchLeaves = useCallback(async () => {
-        setLeaves(dummyLeaveData);
-
-        setTimeout(() => {
-            setLoading(false);
-        }, 1000);
+        try {
+            const res = await api.get('/leave');
+            setLeaves(res.data.data || [])
+            if (res.data.employee?.isDeleted) setIsDeleted(true)
+        } catch (error) {
+            toast.error(error?.response?.data?.error || error.message)
+        } finally {
+            setLoading(false)
+        }
     }, []);
 
     useEffect(() => {

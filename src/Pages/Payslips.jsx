@@ -1,35 +1,74 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { Loader2 } from 'lucide-react';
-import {
-    dummyPayslipData,
-    dummyEmployeeDashboardData,
-} from '../assets/assets';
-import PayslipList from '../components/payslip/PayslipList';
-import GeneratePayslipForm from '../components/payslip/GeneratePayslipForm';
-const Payslips = () => {
-    const [payslips, setPayslip] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [employees, setEmployees] = useState([]);
+import React, { useCallback, useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
+import PayslipList from "../components/payslip/PayslipList";
+import GeneratePayslipForm from "../components/payslip/GeneratePayslipForm";
+import { useAuth } from "../context/AuthContext";
+import api from "../api/axios";
+import toast from "react-hot-toast";
 
-    const isAdmin = true;
+const Payslips = () => {
+    const [payslips, setPayslips] = useState([]);
+    const [employees, setEmployees] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    const { user } = useAuth();
+    const isAdmin = user?.role === "ADMIN";
 
     const fetchPayslips = useCallback(async () => {
-        setPayslip(dummyPayslipData);
+        try {
+            setLoading(true);
 
-        setTimeout(() => {
+            const res = await api.get("/payslips");
+
+            setPayslips(
+                Array.isArray(res?.data?.data)
+                    ? res.data.data
+                    : []
+            );
+        } catch (error) {
+            toast.error(
+                error?.response?.data?.error ||
+                error?.message ||
+                "Failed to fetch payslips"
+            );
+            setPayslips([]);
+        } finally {
             setLoading(false);
-        }, 1000);
+        }
     }, []);
+
+    const fetchEmployees = useCallback(async () => {
+        if (!isAdmin) return;
+
+        try {
+            const res = await api.get("/employees");
+
+            let employeeData = [];
+
+            if (Array.isArray(res.data)) {
+                employeeData = res.data;
+            } else if (Array.isArray(res?.data?.data)) {
+                employeeData = res.data.data;
+            }
+
+            setEmployees(
+                employeeData.filter(
+                    (employee) => !employee?.isDeleted
+                )
+            );
+        } catch (error) {
+            console.error("Employee fetch error:", error);
+            setEmployees([]);
+        }
+    }, [isAdmin]);
 
     useEffect(() => {
         fetchPayslips();
     }, [fetchPayslips]);
 
     useEffect(() => {
-        if (isAdmin) {
-            setEmployees(dummyEmployeeDashboardData);
-        }
-    }, [isAdmin]);
+        fetchEmployees();
+    }, [fetchEmployees]);
 
     if (loading) {
         return (
@@ -55,12 +94,15 @@ const Payslips = () => {
                 </div>
 
                 {isAdmin && (
-                    <GeneratePayslipForm employees={employees} onSuccess={fetchPayslips}></GeneratePayslipForm>
+                    <GeneratePayslipForm
+                        employees={employees || []}
+                        onSuccess={fetchPayslips}
+                    />
                 )}
             </div>
 
             <PayslipList
-                payslips={payslips}
+                payslips={Array.isArray(payslips) ? payslips : []}
                 isAdmin={isAdmin}
             />
         </div>

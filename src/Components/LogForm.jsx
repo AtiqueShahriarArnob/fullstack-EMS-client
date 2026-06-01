@@ -6,9 +6,11 @@ import {
 } from 'lucide-react';
 
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import toast from 'react-hot-toast';
 
-const LogForm = ({ title }) => {
+const LogForm = ({ title, role }) => {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -16,24 +18,24 @@ const LogForm = ({ title }) => {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
+    const { login } = useAuth();
+    const navigate = useNavigate();
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        setError("");
         setLoading(true);
 
         try {
-            console.log({
-                email,
-                password
-            });
-
-            // fake delay
-            setTimeout(() => {
-                setLoading(false);
-            }, 1000);
-
-        } catch (err) {
-            setError("Something went wrong");
+            await login(email, password, role);
+            navigate("/dashboard");
+        } catch (error) {
+            toast.error(
+                error.response?.data?.error ||
+                error.message ||
+                "Login failed"
+            );
+        } finally {
             setLoading(false);
         }
     };

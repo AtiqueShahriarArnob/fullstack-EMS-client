@@ -1,5 +1,7 @@
-import { FileText, Loader2, X } from "lucide-react";
 import React, { useState } from "react";
+import { FileText, Loader2, X } from "lucide-react";
+import api from "../../api/axios";
+import toast from "react-hot-toast";
 
 const ApplyLeaveModal = ({ open, onClose, onSuccess }) => {
     const [loading, setLoading] = useState(false);
@@ -12,29 +14,27 @@ const ApplyLeaveModal = ({ open, onClose, onSuccess }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         setLoading(true);
 
-        const formData = new FormData(e.target);
+        const formData = new FormData(e.currentTarget);
+        const data = Object.fromEntries(formData.entries());
 
-        const leaveData = {
-            type: formData.get("type"),
-            startDate: formData.get("startDate"),
-            endDate: formData.get("endDate"),
-            reason: formData.get("reason"),
-        };
+        try {
+            await api.post("/leave", data);
 
-        console.log(leaveData);
+            toast.success("Leave request submitted successfully");
 
-        setTimeout(() => {
-            setLoading(false);
-
-            if (onSuccess) {
-                onSuccess();
-            }
-
+            onSuccess?.();
             onClose();
-        }, 1000);
+        } catch (err) {
+            toast.error(
+                err.response?.data?.error ||
+                err.response?.data?.message ||
+                err.message
+            );
+        } finally {
+            setLoading(false);
+        }
     };
 
     if (!open) return null;
@@ -128,7 +128,7 @@ const ApplyLeaveModal = ({ open, onClose, onSuccess }) => {
 
                         <textarea
                             name="reason"
-                            rows="4"
+                            rows={4}
                             required
                             placeholder="Enter reason for leave..."
                             className="w-full px-4 py-3 border border-slate-200 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -150,7 +150,9 @@ const ApplyLeaveModal = ({ open, onClose, onSuccess }) => {
                             disabled={loading}
                             className="px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                         >
-                            {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+                            {loading && (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                            )}
                             {loading ? "Submitting..." : "Submit Request"}
                         </button>
                     </div>
