@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
-import PayslipList from "../components/payslip/PayslipList";
-import GeneratePayslipForm from "../components/payslip/GeneratePayslipForm";
+import PayslipList from "../Components/payslip/PayslipList";
+import GeneratePayslipForm from "../Components/payslip/GeneratePayslipForm";
 import { useAuth } from "../context/AuthContext";
 import api from "../api/axios";
 import toast from "react-hot-toast";
@@ -20,17 +20,24 @@ const Payslips = () => {
 
             const res = await api.get("/payslips");
 
-            setPayslips(
-                Array.isArray(res?.data?.data)
-                    ? res.data.data
-                    : []
-            );
+            let payslipData = [];
+
+            if (Array.isArray(res?.data)) {
+                payslipData = res.data;
+            } else if (Array.isArray(res?.data?.data)) {
+                payslipData = res.data.data;
+            }
+
+            setPayslips(payslipData);
         } catch (error) {
+            console.error("Payslip fetch error:", error);
+
             toast.error(
                 error?.response?.data?.error ||
                 error?.message ||
                 "Failed to fetch payslips"
             );
+
             setPayslips([]);
         } finally {
             setLoading(false);
@@ -45,10 +52,12 @@ const Payslips = () => {
 
             let employeeData = [];
 
-            if (Array.isArray(res.data)) {
+            if (Array.isArray(res?.data)) {
                 employeeData = res.data;
             } else if (Array.isArray(res?.data?.data)) {
                 employeeData = res.data.data;
+            } else if (Array.isArray(res?.data?.employees)) {
+                employeeData = res.data.employees;
             }
 
             setEmployees(
@@ -67,8 +76,10 @@ const Payslips = () => {
     }, [fetchPayslips]);
 
     useEffect(() => {
-        fetchEmployees();
-    }, [fetchEmployees]);
+        if (isAdmin) {
+            fetchEmployees();
+        }
+    }, [isAdmin, fetchEmployees]);
 
     if (loading) {
         return (
@@ -82,9 +93,7 @@ const Payslips = () => {
         <div className="animate-fade-in">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
                 <div className="page-header">
-                    <h1 className="page-title">
-                        Payslips
-                    </h1>
+                    <h1 className="page-title">Payslips</h1>
 
                     <p className="page-subtitle">
                         {isAdmin
@@ -95,7 +104,7 @@ const Payslips = () => {
 
                 {isAdmin && (
                     <GeneratePayslipForm
-                        employees={employees || []}
+                        employees={Array.isArray(employees) ? employees : []}
                         onSuccess={fetchPayslips}
                     />
                 )}
