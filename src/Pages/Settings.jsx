@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Loader2, Lock } from "lucide-react";
-import ProfileForm from "../components/ProfileForm";
-import ChangePasswordModal from "../components/ChangePasswordModal";
+import ProfileForm from "../Components/ProfileForm";
+import ChangePasswordModal from "../Components/ChangePasswordModal";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
 import api from "../api/axios";

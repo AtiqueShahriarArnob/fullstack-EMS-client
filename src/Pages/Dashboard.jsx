@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { dummyEmployeeDashboardData } from "../assets/assets";
 import EmployeeDashboard from "../Components/EmployeeDashboard";
 import AdminDashboard from "../Components/AdminDashboard";
 import api from "../api/axios";
