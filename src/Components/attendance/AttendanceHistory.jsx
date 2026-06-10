@@ -15,7 +15,7 @@ const AttendanceHistory = ({ history = [] }) => {
                 <table className='table-modern'>
                     <thead>
                         <tr>
-                            <th className='px-6 py-4'>Data</th>
+                            <th className='px-6 py-4'>Date</th>
                             <th className='px-6 py-4'>Check IN</th>
                             <th className='px-6 py-4'>Check OUT</th>
                             <th className='px-6 py-4'>Work IN hour</th>
@@ -82,10 +82,10 @@ const AttendanceHistory = ({ history = [] }) => {
                                         <td className='px-6 py-4'>
                                             <span
                                                 className={`badge ${record.status === "PRESENT"
-                                                        ? "badge-success"
-                                                        : record.status === "LATE"
-                                                            ? "badge-warning"
-                                                            : "badge-danger"
+                                                    ? "badge-success"
+                                                    : record.status === "LATE"
+                                                        ? "badge-warning"
+                                                        : "badge-danger"
                                                     }`}
                                             >
                                                 {record.status}

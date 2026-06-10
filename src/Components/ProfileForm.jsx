@@ -52,21 +52,21 @@ const ProfileForm = ({ initialData, onSuccess }) => {
                         <label className="block text-sm font-medium text-slate-700 mb-2">
                             Name
                         </label>
-                        <input disable value={`${initialData.firstName} ${initialData.firstName}`} className="bg-slate-50 text-slate-400 cursor-not-allowed">
+                        <input disabled value={`${initialData.firstName} ${initialData.lastName}`} className="bg-slate-50 text-slate-400 cursor-not-allowed">
                         </input>
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-slate-700 mb-2">
                             Email
                         </label>
-                        <input disable value={initialData.email} className="bg-slate-50 text-slate-400 cursor-not-allowed">
+                        <input disabled value={initialData.email} className="bg-slate-50 text-slate-400 cursor-not-allowed">
                         </input>
                     </div>
                     <div className="sm:col-span-2">
                         <label className="block text-sm font-medium text-slate-700 mb-2">
                             position
                         </label>
-                        <input disable value={initialData.position} className="bg-slate-50 text-slate-400 cursor-not-allowed">
+                        <input disabled value={initialData.position} className="bg-slate-50 text-slate-400 cursor-not-allowed">
                         </input>
                     </div>
                 </div>
@@ -74,7 +74,7 @@ const ProfileForm = ({ initialData, onSuccess }) => {
                     <label className="block text-sm font-medium text-slate-700 mb-2">
                         Bio
                     </label>
-                    <textarea disabled={initialData.isDeleted} name=" bio" defaultValue={initialData.bio || ""} placeholder="write your bio" className={`resize-none ${initialData.isDeleted ? "bg-slate-50 text-slate-400 cursor-not-allowed" : ""}`}></textarea>
+                    <textarea disabled={initialData.isDeleted} name="bio" defaultValue={initialData.bio || ""} placeholder="write your bio" className={`resize-none ${initialData.isDeleted ? "bg-slate-50 text-slate-400 cursor-not-allowed" : ""}`}></textarea>
                     <p className="text-xs text-slate-400 mt-1.5">This will be display in your profile</p>
 
                 </div>
@@ -87,9 +87,7 @@ const ProfileForm = ({ initialData, onSuccess }) => {
                     </div>
                 ) : (
                     <div className="flex justify-end pt-2">
-                        <button className="btn-primary flex items-center gap-2 justify-center w-full sm:w-auto">
-                            {loading ? <Loader2 className="w-4 h-4 animated-spin"></Loader2> : <Save className="w-4 h-4"></Save>} Save Change
-                        </button>
+
                     </div>
                 )}
             </div>

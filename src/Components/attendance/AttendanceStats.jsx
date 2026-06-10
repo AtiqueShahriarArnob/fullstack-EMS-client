@@ -3,8 +3,12 @@ import { AlertCircleIcon, CalculatorIcon, ClockIcon } from "lucide-react";
 
 const AttendanceStats = ({ history }) => {
 
-    const totalPresent = history.filter((h) => h.status === "PRESENT" | h.status === "LATE").length;
-    const totalLate = history.filter((h) => h.status === "LATE").lenth;
+    const totalPresent = history.filter(
+        (h) => h.status === "PRESENT" || h.status === "LATE"
+    ).length;
+    const totalLate = history.filter(
+        (h) => h.status === "LATE"
+    ).length;
 
 
     const stats = [
@@ -31,7 +35,7 @@ const AttendanceStats = ({ history }) => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             {stats.map((s) => (
                 <div
-                    key={s.lable}
+                    key={s.label}
                     className="card card-hover p-5 sm:p-6 flex items-center gap-4 relative overflow-hidden group"
                 >
                     <div className="absolute left-0 top-0 bottom-0 w-1 rounded-r-full bg-slate-500/70 group-hover:bg-indigo-500/70"></div>

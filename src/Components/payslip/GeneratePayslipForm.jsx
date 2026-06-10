@@ -68,7 +68,7 @@ const GeneratePayslipForm = ({ employees, onSuccess }) => {
                                         key={employee._id}
                                         value={employee._id}
                                     >
-                                        {employee.name}
+                                        {employee.firstName} {employee.lastName}
                                     </option>
                                 ))}
                         </select>
